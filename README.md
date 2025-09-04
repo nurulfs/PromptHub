@@ -2,6 +2,10 @@
 
 Prompt-Hub is a centralized place to create, manage, and share prompts for AI models. It helps you build complex prompts, organize them, and collaborate with others.
 
+## Demo
+
+![ezgif-5af2f44aadd9d7](https://github.com/user-attachments/assets/59266d48-86be-4a76-ba17-9d480109c0e2)
+
 ## Project Structure
 
 This is a Kotlin Multiplatform project targeting both Web and Server.
@@ -56,15 +60,6 @@ To build and run the development version of the server:
    npm install
    npm run start
    ```
-
----
-
-## Demo
-
-Here a Demo ScreenShot 
-
-<img width="1366" height="656" alt="image" src="https://github.com/user-attachments/assets/646a6744-f1d4-4ccf-ab5b-2ace657a62d3" />
-
 
 ---
 
