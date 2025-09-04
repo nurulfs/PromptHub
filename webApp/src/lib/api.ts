@@ -29,11 +29,11 @@ export async function listModels(apiBase: string, provider: "lmstudio"): Promise
 // ---------- runs ----------
 export async function startRun(
     apiBase: string,
-    body: { prompt: string; input?: string; model: string }
+    body: { prompt: string; input?: string; model: string; temperature?: number; maxTokens?: number; }
 ): Promise<{ runId: string }> {
     const res = await fetch(`${apiBase}/api/test/run`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", },
         body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(`startRun failed: ${res.status}`);
@@ -51,9 +51,8 @@ export function streamRun(
     const es = new EventSource(url);
 
     es.onmessage = (ev) => {
-        // server escapes newlines as \\n; restore them
-        const t = (ev.data ?? "").replaceAll("\\n", "\n");
-        if (t) onToken(t);
+        const text = (ev.data ?? "").replace(/\\n/g, "\n").replace(/\\t/g, "\t");
+        onToken(text);
     };
 
     es.addEventListener("done", () => {

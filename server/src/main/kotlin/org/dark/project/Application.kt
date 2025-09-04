@@ -184,13 +184,13 @@ fun Application.module() {
                         launch {
                             try {
                                 flow.collect { token ->
-                                    val safe = token.replace("\n", "\\n")
-                                    try {
-                                        write("data: $safe\n\n")
-                                        flush()
-                                    } catch (_: Throwable) {
-                                        throw CancellationException() // client closed
+                                    // SSE spec: one field per line; multi-line payload = multiple `data:` lines
+                                    val parts = token.split("\n")
+                                    for (p in parts) {
+                                        write("data: $p\n")
                                     }
+                                    write("\n") // end of event
+                                    flush()
                                 }
                                 try {
                                     write("event: done\ndata: {}\n\n")
@@ -198,7 +198,7 @@ fun Application.module() {
                                 } catch (_: Throwable) {
                                 }
                             } catch (_: CancellationException) {
-                                // silently stop on client disconnect
+                                println("Job Canceled")
                             }
                         }
                     job.join()

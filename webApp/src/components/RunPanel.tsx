@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from "react";
-import { listModels, resolveApiBase, startRun, streamRun } from "../lib/api";
+import {useEffect, useRef, useState} from "react";
+import {listModels, resolveApiBase, startRun, streamRun} from "../lib/api";
 import TemplateGallery from "./TemplateGallery";
 import Library from "./Library";
 import StatusBar from "./StatusBar";
-import { PromptItem, upsertPrompt } from "../lib/storage";
+import {PromptItem, upsertPrompt} from "../lib/storage";
 import SettingsModal from "./SettingsModal";
 import PromptBuilder from "./PromptBuilder";
 import MarkdownPane from "./MarkdownPane";
 import FuturisticBG from "./FuturisticBG";
+import HoverButton from "./HoveredButton";
 
 export default function RunPanel() {
     const [apiBase, setApiBase] = useState<string>("");
@@ -61,7 +62,13 @@ export default function RunPanel() {
                 setOutput("Error: No LM Studio model selected. Start LM Studio, load a model, then pick it here.");
                 return;
             }
-            const { runId } = await startRun(apiBase || "", { prompt, input, model: modelSpec });
+            const {runId} = await startRun(apiBase, {
+                prompt,
+                input,
+                model: modelSpec,
+                temperature: 0.8,      // colder = less babble
+                maxTokens: 8000         // give it room to finish code blocks
+            });
             stopRef.current = streamRun(apiBase || "", runId, (t) => setOutput((s) => s + t), () => setBusy(false));
         } catch (e) {
             setBusy(false);
@@ -80,7 +87,7 @@ export default function RunPanel() {
     }
 
     function handleSave() {
-        upsertPrompt({ title: title || "Untitled", body: prompt });
+        upsertPrompt({title: title || "Untitled", body: prompt});
     }
 
     function handleLoad(p: PromptItem) {
@@ -89,33 +96,42 @@ export default function RunPanel() {
     }
 
     return (
-        <div style={{ position: "relative", width: "100%", height: "100%" }}>
+        <div style={{position: "relative", width: "100%", height: "100%"}}>
             {/* Background stays fixed and behind everything */}
-            <FuturisticBG opacity={0.9} />
+            <FuturisticBG/>
 
             {/* Main UI sits above the background */}
-            <div style={{ position: "relative", zIndex: 1, margin: "0 auto", maxWidth: 20000, padding: 16 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                    <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800 }}>Prompt-Hub -- Desktop</h1>
-                    <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-                        <button onClick={() => setShowSettings(true)} style={btnGhost}>Settings</button>
-                        <a
-                            href="https://github.com/Siddhesh2377/PromptHub"
-                            target="_blank"
-                            rel="noreferrer"
-                            style={{
-                                ...btnGhost,
-                                textDecoration: "none",
-                                display: "inline-flex",
-                                alignItems: "center"
-                            }}
+            <div style={{position: "relative", zIndex: 1, margin: "0 auto", maxWidth: 20000, padding: 16}}>
+                <div style={{display: "flex", alignItems: "center", gap: 12, marginBottom: 12}}>
+                    <h1 style={{margin: 0, fontSize: 32, fontWeight: 800}}>Prompt-Hub -- Desktop</h1>
+                    <div style={{marginLeft: "auto", display: "flex", gap: 8}}>
+                        <HoverButton
+                            baseStyle={btnGhost}
+                            hoverStyle={btnGhostHover}
+                            onClick={() => setShowSettings(true)}
                         >
-                            GitHub
-                        </a>
+                            Settings
+                        </HoverButton>
+
+                        <HoverButton
+                            baseStyle={btnGhost}
+                            hoverStyle={btnGhostHover}
+                            onClick={() => window.open("https://github.com/Siddhesh2377/PromptHub/issues", "_blank")}
+                        >
+                            Feedback
+                        </HoverButton>
+
+                        <HoverButton
+                            baseStyle={btnGhost}
+                            hoverStyle={btnGhostHover}
+                            onClick={() => window.open("https://github.com/Siddhesh2377/PromptHub", "_blank")}
+                        >
+                            Git-Hub
+                        </HoverButton>
                     </div>
                 </div>
 
-                <StatusBar apiBase={apiBase} />
+                <StatusBar apiBase={apiBase}/>
 
                 <div
                     style={{
@@ -128,19 +144,19 @@ export default function RunPanel() {
                 >
                     {/* Editor */}
                     <section style={card}>
-                        <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr" }}>
-                            <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 480px" }}>
+                        <div style={{display: "grid", gap: 10, gridTemplateColumns: "1fr"}}>
+                            <div style={{display: "grid", gap: 10, gridTemplateColumns: "1fr 480px"}}>
                                 <input
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     placeholder="Title"
                                     style={inputStyle}
                                 />
-                                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                                <div style={{display: "flex", gap: 8, alignItems: "center"}}>
                                     <select
                                         value={provider}
                                         onChange={(e) => setProvider(e.target.value as any)}
-                                        style={{ ...inputStyle, padding: 8 }}
+                                        style={{...inputStyle, padding: 8}}
                                     >
                                         <option value="lmstudio">lmstudio</option>
                                         <option value="demo">demo</option>
@@ -154,7 +170,7 @@ export default function RunPanel() {
                                                 onFocus={() => {
                                                     if (models.length === 0 && !modelsLoading) fetchModels();
                                                 }}
-                                                style={{ ...inputStyle, padding: 8, minWidth: 240 }}
+                                                style={{...inputStyle, padding: 8, minWidth: 240}}
                                                 disabled={modelsLoading || models.length === 0}
                                             >
                                                 {modelsLoading ? (
@@ -174,13 +190,19 @@ export default function RunPanel() {
                                             </button>
                                         </>
                                     )}
-
-                                    <button onClick={handleSave} style={btn}>Save</button>
+                                    <HoverButton
+                                        baseStyle={btn}
+                                        hoverStyle={btnHover}
+                                        onClick={handleSave}
+                                        style={{width: "100%"}}
+                                    >
+                                        Save
+                                    </HoverButton>
                                 </div>
                             </div>
 
                             {modelsError && (
-                                <div style={{ fontSize: 12, color: "#b00" }}>
+                                <div style={{fontSize: 12, color: "#b00"}}>
                                     {modelsError} (see browser console → Network for /api/models)
                                 </div>
                             )}
@@ -189,10 +211,10 @@ export default function RunPanel() {
                             <textarea
                                 value={prompt}
                                 onChange={(e) => setPrompt(e.target.value)}
-                                style={{ ...inputStyle, minHeight: 160 }}
+                                style={{...inputStyle, minHeight: 160}}
                             />
 
-                            <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 160px" }}>
+                            <div style={{display: "grid", gap: 10, gridTemplateColumns: "1fr 160px"}}>
                                 <div>
                                     <label style={label}>Input (optional)</label>
                                     <input
@@ -201,35 +223,44 @@ export default function RunPanel() {
                                         style={inputStyle}
                                     />
                                 </div>
-                                <div style={{ display: "flex", alignItems: "end", gap: 8 }}>
+                                <div style={{display: "flex", alignItems: "end", gap: 8}}>
                                     {!busy ? (
-                                        <button
+                                        <HoverButton
+                                            baseStyle={btn}
+                                            hoverStyle={btnHover}
                                             onClick={handleRun}
                                             disabled={(provider === "lmstudio" && !modelName) || modelsLoading}
                                             style={{
-                                                ...btn,
                                                 width: "100%",
-                                                opacity: (provider === "lmstudio" && !modelName) || modelsLoading ? 0.6 : 1,
+                                                opacity:
+                                                    (provider === "lmstudio" && !modelName) || modelsLoading ? 0.6 : 1,
+                                                pointerEvents:
+                                                    (provider === "lmstudio" && !modelName) || modelsLoading ? "none" : "auto",
                                             }}
                                         >
                                             Run
-                                        </button>
+                                        </HoverButton>
                                     ) : (
-                                        <button onClick={handleStop} style={{ ...btnGhost, width: "100%" }}>
+                                        <HoverButton
+                                            baseStyle={btnGhost}
+                                            hoverStyle={btnGhostHover}
+                                            onClick={handleStop}
+                                            style={{width: "100%"}}
+                                        >
                                             Stop
-                                        </button>
+                                        </HoverButton>
                                     )}
                                 </div>
                             </div>
 
                             <label style={label}>Streamed Output</label>
-                            <MarkdownPane markdown={output || "_Run a prompt to see output here…_"} />
+                            <MarkdownPane markdown={output || "_Run a prompt to see output here…_"}/>
                         </div>
                     </section>
 
                     {/* Prompt Builder */}
                     <section style={card}>
-                        <PromptBuilder onInsert={(p) => setPrompt(p)} />
+                        <PromptBuilder onInsert={(p) => setPrompt(p)}/>
                     </section>
 
                     {/* Templates + Library */}
@@ -242,15 +273,15 @@ export default function RunPanel() {
                         }}
                     >
                         <div style={card}>
-                            <TemplateGallery onUse={handleUseTemplate} currentPrompt={{ title, body: prompt }} />
+                            <TemplateGallery onUse={handleUseTemplate} currentPrompt={{title, body: prompt}}/>
                         </div>
                         <div style={card}>
-                            <Library onLoad={handleLoad} />
+                            <Library onLoad={handleLoad}/>
                         </div>
                     </section>
                 </div>
 
-                <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} />
+                <SettingsModal open={showSettings} onClose={() => setShowSettings(false)}/>
             </div>
         </div>
     );
@@ -258,7 +289,7 @@ export default function RunPanel() {
 
 /* ---- STYLES ---- */
 const card: React.CSSProperties = {
-    background: "#fff",
+    background: "#e1dece",
     border: "1px solid #eee",
     borderRadius: 10,
     padding: 14,
@@ -272,18 +303,32 @@ const inputStyle: React.CSSProperties = {
     fontSize: 14,
     background: "#fff"
 };
-const label: React.CSSProperties = { fontSize: 12, color: "#666" };
-const btn: React.CSSProperties = {
-    padding: "10px 14px",
-    borderRadius: 8,
-    background: "#111",
-    color: "#fff",
-    border: "1px solid #111"
-};
+const label: React.CSSProperties = {fontSize: 12, color: "#666"};
 const btnGhost: React.CSSProperties = {
-    padding: "10px 14px",
-    borderRadius: 8,
+    padding: "10px 24px",
+    borderRadius: 26,
     background: "#fff",
     color: "#111",
-    border: "1px solid #111"
+    border: "1px solid transparent",
 };
+
+const btnGhostHover: React.CSSProperties = {
+    border: "1px solid #111",
+    borderRadius: 8,
+    boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+};
+
+const btn: React.CSSProperties = {
+    padding: "10px 14px",
+    borderRadius: 26,
+    background: "#111",
+    color: "#fff",
+    border: "1px solid #111",
+};
+const btnHover: React.CSSProperties = {
+    transform: "translateY(-1px)",
+    borderRadius: 8,
+    boxShadow: "0 6px 16px rgba(0,0,0,0.15)",
+};
+
+

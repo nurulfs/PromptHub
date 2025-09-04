@@ -71,9 +71,7 @@ export default function FuturisticBG({
             const h = canvas.height / DPR;
             const r = Math.min(w, h) * globeRadiusRatio;
             const cx = w / 2;
-            const cy = h / 2;
-
-            // columns across the diameter of the globe
+// columns across the diameter of the globe
             for (let x = cx - r; x <= cx + r; x += colSpacing) {
                 const speed = 28 + Math.random() * 22; // clean, not too fast
                 columns.push({ x, speed, offset: Math.random() * 1000, jitter: Math.random() * 2 });
