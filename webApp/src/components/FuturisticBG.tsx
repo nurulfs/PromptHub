@@ -15,7 +15,7 @@ import { useEffect, useRef } from "react";
 export default function FuturisticBG({
                                          accent = "#000000",
                                          bg = "#fffcf4",
-                                         intensity = 0.85,
+                                         intensity = 1,
                                      }: {
     accent?: string;
     bg?: string;
@@ -41,11 +41,11 @@ export default function FuturisticBG({
         window.addEventListener("resize", onResize, { passive: true });
 
         // ------- CONFIG (tweak to taste) -------
-        const charset = "01<>/|{}[]#*+=".split("");
-        const globeRadiusRatio = 0.9; // radius relative to min(width,height)
-        const colSpacing = 12;         // px between columns
-        const rowSpacing = 14;         // px between rows (line height)
-        const twinkleCount = 70;       // sparse and elegant
+        const charset = "01<>/|*2!4*}{}[]#*+=".split("");
+        const globeRadiusRatio = 1.2; // radius relative to min(width,height)
+        const colSpacing = 14;         // px between columns
+        const rowSpacing = 16;         // px between rows (line height)
+        const twinkleCount = 50;       // sparse and elegant
         // ---------------------------------------
 
         // Twinkles
