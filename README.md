@@ -1,44 +1,71 @@
-This is a Kotlin Multiplatform project targeting Web, Server.
+# Prompt-Hub
 
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
+Prompt-Hub is a centralized place to create, manage, and share prompts for AI models. It helps you build complex prompts, organize them, and collaborate with others.
 
-* [/shared](./shared/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./shared/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+## Project Structure
 
-### Build and Run Server
+This is a Kotlin Multiplatform project targeting both Web and Server.
 
-To build and run the development version of the server, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :server:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :server:run
-  ```
+* **[/server](./server/src/main/kotlin)** - Ktor server application.
+* **[/shared](./shared/src)** - Shared code between all targets.
 
-### Build and Run Web Application
+  * **[commonMain](./shared/src/commonMain/kotlin)** - Shared logic for all platforms.
+  * Platform-specific folders for additional code.
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-1. Install [Node.js](https://nodejs.org/en/download) (which includes `npm`)
+## Build and Run
+
+### Run Server
+
+To build and run the development version of the server:
+
+**macOS/Linux:**
+
+```bash
+./gradlew :server:run
+```
+
+**Windows:**
+
+```bash
+.\gradlew.bat :server:run
+```
+
+---
+
+### Run Web Application
+
+1. Install [Node.js](https://nodejs.org/en/download) (includes `npm`)
+
 2. Build Kotlin/JS shared code:
-   - on macOS/Linux
-     ```shell
-     ./gradlew :shared:jsBrowserDevelopmentLibraryDistribution
-     ```
-   - on Windows
-     ```shell
-     .\gradlew.bat :shared:jsBrowserDevelopmentLibraryDistribution
-     ```
-3. Build and run the web application
-   ```shell
+
+   **macOS/Linux:**
+
+   ```bash
+   ./gradlew :shared:jsBrowserDevelopmentLibraryDistribution
+   ```
+
+   **Windows:**
+
+   ```bash
+   .\gradlew.bat :shared:jsBrowserDevelopmentLibraryDistribution
+   ```
+
+3. Build and run the web app:
+
+   ```bash
    npm install
    npm run start
    ```
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## Demo
+
+Here a Demo ScreenShot 
+
+<img width="1366" height="656" alt="image" src="https://github.com/user-attachments/assets/646a6744-f1d4-4ccf-ab5b-2ace657a62d3" />
+
+
+---
+
+Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html).
