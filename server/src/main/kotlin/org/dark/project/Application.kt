@@ -27,6 +27,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 object RunStore {
     val requests = ConcurrentHashMap<String, TestRunRequest>()
+    val inProgress = ConcurrentHashMap.newKeySet<String>()
 }
 
 fun llmFor(modelSpec: String): Pair<LlmClient, String> {
@@ -126,42 +127,55 @@ fun Application.module() {
         }
 
         // Stream tokens for a run
+        // /api/test/stream/{runId}
         get("/api/test/stream/{runId}") {
-            // Headers that discourage buffering
-            call.response.headers.append(HttpHeaders.CacheControl, "no-cache")
-            call.response.headers.append(HttpHeaders.Connection, "keep-alive")
-            call.response.headers.append("X-Accel-Buffering", "no") // nginx
-
+            call.response.cacheControl(CacheControl.NoCache(null))
             call.respondTextWriter(contentType = ContentType.Text.EventStream) {
-                fun trySend(line: String): Boolean =
+                val runId = call.parameters["runId"] ?: return@respondTextWriter
+                val req = RunStore.requests[runId]
+
+                // no request or already taken
+                if (req == null || !RunStore.inProgress.add(runId)) {
                     try {
-                        write(line)
-                        write("\n\n")
+                        write("event: done\ndata: {}\n\n")
                         flush()
-                        true
                     } catch (_: Throwable) {
-                        false
-                    } // includes ClosedWriteChannelException
-
-                val runId = call.parameters["runId"]
-                val req = RunStore.requests.remove(runId)
-                if (req == null) {
-                    trySend("event: done\ndata: {}")
-                    return@respondTextWriter
-                }
-
-                // demo
-                if (req.model.equals("demo", true) || req.model.equals("demo:demo", true)) {
-                    val demo = listOf("Hello", " from", " prompt-hub!", " (runId=", runId, ")")
-                    for (chunk in demo) {
-                        if (!trySend("data: $chunk")) return@respondTextWriter
-                        delay(200)
                     }
-                    trySend("event: done\ndata: {}")
                     return@respondTextWriter
                 }
 
-                // real stream
+                // keep a tiny heartbeat to prevent proxies from buffering
+                fun heartbeat() {
+                    try {
+                        write(": keepalive\n\n")
+                        flush()
+                    } catch (_: Throwable) {
+                    }
+                }
+                heartbeat()
+
+                // DEMO path unchanged ...
+                if (req.model.equals("demo", true) || req.model.equals("demo:demo", true)) {
+                    for (chunk in listOf("Hello", " from", " prompt-hub!", " (runId=", runId, ")")) {
+                        try {
+                            write("data: $chunk\n\n")
+                            flush()
+                        } catch (_: Throwable) {
+                            break
+                        }
+                        delay(150)
+                    }
+                    try {
+                        write("event: done\ndata: {}\n\n")
+                        flush()
+                    } catch (_: Throwable) {
+                    }
+                    RunStore.requests.remove(runId)
+                    RunStore.inProgress.remove(runId)
+                    return@respondTextWriter
+                }
+
+                // REAL stream
                 try {
                     val (client, model) = llmFor(req.model)
                     val flow = client.stream(model, req.prompt, req.input, req.temperature, req.maxTokens)
@@ -171,17 +185,33 @@ fun Application.module() {
                             try {
                                 flow.collect { token ->
                                     val safe = token.replace("\n", "\\n")
-                                    if (!trySend("data: $safe")) throw CancellationException()
+                                    try {
+                                        write("data: $safe\n\n")
+                                        flush()
+                                    } catch (_: Throwable) {
+                                        throw CancellationException() // client closed
+                                    }
                                 }
-                                trySend("event: done\ndata: {}")
+                                try {
+                                    write("event: done\ndata: {}\n\n")
+                                    flush()
+                                } catch (_: Throwable) {
+                                }
                             } catch (_: CancellationException) {
-                                // client disconnected; just stop
+                                // silently stop on client disconnect
                             }
                         }
                     job.join()
                 } catch (e: Throwable) {
-                    trySend("data: [provider error: ${e.message}]")
-                    trySend("event: done\ndata: {}")
+                    try {
+                        write("data: [provider error: ${e.message}]\n\n")
+                        write("event: done\ndata: {}\n\n")
+                        flush()
+                    } catch (_: Throwable) {
+                    }
+                } finally {
+                    RunStore.requests.remove(runId)
+                    RunStore.inProgress.remove(runId)
                 }
             }
         }

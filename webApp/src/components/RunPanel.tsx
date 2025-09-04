@@ -92,9 +92,9 @@ export default function RunPanel() {
     }
 
     return (
-        <div style={{margin: "0 auto", maxWidth: 1100, padding: 16}}>
+        <div style={{margin: "0 auto", maxWidth: 20000, padding: 16}}>
             <div style={{display: "flex", alignItems: "center", gap: 12, marginBottom: 12}}>
-                <h1 style={{margin: 0, fontSize: 22, fontWeight: 800}}>prompt-hub</h1>
+                <h1 style={{margin: 0, fontSize: 22, fontWeight: 800}}>Prompt-Hub</h1>
                 <div style={{marginLeft: "auto", display: "flex", gap: 8}}>
                     <button onClick={() => setShowSettings(true)} style={btnGhost}>Settings</button>
                     <a href="https://github.com/" target="_blank" rel="noreferrer" style={{
@@ -108,16 +108,29 @@ export default function RunPanel() {
 
             <StatusBar apiBase={apiBase}/>
 
-            <div style={{display: "grid", gap: 18, gridTemplateColumns: "1fr"}}>
+            <div
+                style={{
+                    display: "grid",
+                    gap: 18,
+                    gridTemplateColumns: "1fr 1fr", // Two equal-width columns
+                }}
+            >
                 {/* Editor */}
                 <section style={card}>
-                    <div style={{display: "grid", gap: 10, gridTemplateColumns: "1fr"}}>
-                        <div style={{display: "grid", gap: 10, gridTemplateColumns: "1fr 480px"}}>
-                            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title"
-                                   style={inputStyle}/>
-                            <div style={{display: "flex", gap: 8, alignItems: "center"}}>
-                                <select value={provider} onChange={(e) => setProvider(e.target.value as any)}
-                                        style={{...inputStyle, padding: 8}}>
+                    <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr" }}>
+                        <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 480px" }}>
+                            <input
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                placeholder="Title"
+                                style={inputStyle}
+                            />
+                            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                                <select
+                                    value={provider}
+                                    onChange={(e) => setProvider(e.target.value as any)}
+                                    style={{ ...inputStyle, padding: 8 }}
+                                >
                                     <option value="lmstudio">lmstudio</option>
                                     <option value="demo">demo</option>
                                 </select>
@@ -130,7 +143,7 @@ export default function RunPanel() {
                                             onFocus={() => {
                                                 if (models.length === 0 && !modelsLoading) fetchModels();
                                             }}
-                                            style={{...inputStyle, padding: 8, minWidth: 240}}
+                                            style={{ ...inputStyle, padding: 8, minWidth: 240 }}
                                             disabled={modelsLoading || models.length === 0}
                                         >
                                             {modelsLoading ? (
@@ -138,33 +151,44 @@ export default function RunPanel() {
                                             ) : models.length === 0 ? (
                                                 <option value="">(no models — could not load)</option>
                                             ) : (
-                                                models.map((m) => <option key={m} value={m}>{m}</option>)
+                                                models.map((m) => (
+                                                    <option key={m} value={m}>
+                                                        {m}
+                                                    </option>
+                                                ))
                                             )}
                                         </select>
-                                        <button onClick={fetchModels} style={btnGhost} title="Refresh models">↻</button>
+                                        <button onClick={fetchModels} style={btnGhost} title="Refresh models">
+                                            ↻
+                                        </button>
                                     </>
                                 )}
 
-                                <button onClick={handleSave} style={btn}>Save</button>
+                                <button onClick={handleSave} style={btn}>
+                                    Save
+                                </button>
                             </div>
                         </div>
 
                         {modelsError && (
-                            <div style={{fontSize: 12, color: "#b00"}}>
+                            <div style={{ fontSize: 12, color: "#b00" }}>
                                 {modelsError} (see browser console → Network for /api/models)
                             </div>
                         )}
 
                         <label style={label}>Prompt</label>
-                        <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)}
-                                  style={{...inputStyle, minHeight: 160}}/>
+                        <textarea
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            style={{ ...inputStyle, minHeight: 160 }}
+                        />
 
-                        <div style={{display: "grid", gap: 10, gridTemplateColumns: "1fr 160px"}}>
+                        <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 160px" }}>
                             <div>
                                 <label style={label}>Input (optional)</label>
-                                <input value={input} onChange={(e) => setInput(e.target.value)} style={inputStyle}/>
+                                <input value={input} onChange={(e) => setInput(e.target.value)} style={inputStyle} />
                             </div>
-                            <div style={{display: "flex", alignItems: "end", gap: 8}}>
+                            <div style={{ display: "flex", alignItems: "end", gap: 8 }}>
                                 {!busy ? (
                                     <button
                                         onClick={handleRun}
@@ -172,38 +196,47 @@ export default function RunPanel() {
                                         style={{
                                             ...btn,
                                             width: "100%",
-                                            opacity: (provider === "lmstudio" && !modelName) || modelsLoading ? 0.6 : 1
+                                            opacity: (provider === "lmstudio" && !modelName) || modelsLoading ? 0.6 : 1,
                                         }}
                                     >
                                         Run
                                     </button>
                                 ) : (
-                                    <button onClick={handleStop} style={{...btnGhost, width: "100%"}}>Stop</button>
+                                    <button onClick={handleStop} style={{ ...btnGhost, width: "100%" }}>
+                                        Stop
+                                    </button>
                                 )}
                             </div>
                         </div>
 
                         <label style={label}>Streamed Output</label>
-                        <MarkdownPane markdown={output || "_Run a prompt to see output here…_"}/>
-
+                        <MarkdownPane markdown={output || "_Run a prompt to see output here…_"} />
                     </div>
                 </section>
 
                 {/* Prompt Builder */}
                 <section style={card}>
-                    <PromptBuilder onInsert={(p) => setPrompt(p)}/>
+                    <PromptBuilder onInsert={(p) => setPrompt(p)} />
                 </section>
 
                 {/* Templates + Library */}
-                <section style={{display: "grid", gap: 18, gridTemplateColumns: "1fr 1fr"}}>
+                <section
+                    style={{
+                        display: "grid",
+                        gap: 18,
+                        gridTemplateColumns: "1fr 1fr",
+                        gridColumn: "1 / -1", // Span full width
+                    }}
+                >
                     <div style={card}>
-                        <TemplateGallery onUse={handleUseTemplate} currentPrompt={{title, body: prompt}}/>
+                        <TemplateGallery onUse={handleUseTemplate} currentPrompt={{ title, body: prompt }} />
                     </div>
                     <div style={card}>
-                        <Library onLoad={handleLoad}/>
+                        <Library onLoad={handleLoad} />
                     </div>
                 </section>
             </div>
+
 
             <SettingsModal open={showSettings} onClose={() => setShowSettings(false)}/>
         </div>

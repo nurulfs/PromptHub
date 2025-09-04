@@ -40,13 +40,37 @@ export async function startRun(
     return res.json();
 }
 
-export function streamRun(base: string, runId: string, onToken: (t: string) => void, onDone?: () => void) {
-    const es = new EventSource(`${base}/api/test/stream/${encodeURIComponent(runId)}`);
-    es.onmessage = (ev) => onToken((ev.data ?? "").replaceAll("\\n", "\n"));
-    es.addEventListener("done", () => { es.close(); onDone?.(); });
-    es.onerror = () => { es.close(); onDone?.(); };
+// src/lib/api.ts
+export function streamRun(
+    base: string,
+    runId: string,
+    onToken: (t: string) => void,
+    onDone?: () => void
+) {
+    const url = `${base}/api/test/stream/${encodeURIComponent(runId)}`;
+    const es = new EventSource(url);
+
+    es.onmessage = (ev) => {
+        // server escapes newlines as \\n; restore them
+        const t = (ev.data ?? "").replaceAll("\\n", "\n");
+        if (t) onToken(t);
+    };
+
+    es.addEventListener("done", () => {
+        es.close();
+        onDone?.();
+    });
+
+    es.onerror = () => {
+        // Connection dropped; stop trying—this run is single-consumer.
+        es.close();
+        onDone?.();
+    };
+
+    // return cancel fn
     return () => es.close();
 }
+
 
 
 
